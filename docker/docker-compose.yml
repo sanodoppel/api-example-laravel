@@ -27,22 +27,19 @@ services:
         volumes:
             - ${APP_PATH}:/app
         links:
-            - mysql_api-example-laravel
+            - pgsql_api-example-laravel
         environment:
             XDEBUG_CONFIG: remote_host=${IP_ADDRESS}
 
-    mysql_api-example-laravel:
-        container_name: mysql_api-example-laravel
-        image: mysql:8
-        volumes:
-            - mysql_api-example-laravel_data_container:/var/lib/mysql
+    pgsql_api-example-laravel:
+        container_name: pgsql_api-example-laravel
+        image: postgres:12
         environment:
-            MYSQL_DATABASE: ${DB_NAME}
-            MYSQL_USER: ${DB_USER}
-            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-            MYSQL_PASSWORD: ${DB_PASSWORD}
+            POSTGRES_DB: ${DB_NAME}
+            POSTGRES_USER: ${DB_USER}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
         ports:
-            - 3306:3306
+            - 5432:5432
         networks:
             api-example-laravel:
                 ipv4_address: 10.5.0.4
@@ -73,4 +70,4 @@ networks:
             - subnet: 10.5.0.0/16
 
 volumes:
-    mysql_api-example-laravel_data_container:
+    pgsql_api-example-laravel_data_container:

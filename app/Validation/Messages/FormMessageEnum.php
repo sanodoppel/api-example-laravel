@@ -10,4 +10,7 @@ enum FormMessageEnum
     case WRONG_LENGTH;
     case NOT_UNIQUE;
     case NOT_EXIST;
+    case NOT_STRING;
+    case NOT_PHONE;
+    case DIGIT_WRONG_LENGTH;
 }

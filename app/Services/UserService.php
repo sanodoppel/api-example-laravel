@@ -18,7 +18,7 @@ class UserService
      */
     public function create(CreateUserDTO $createUserDTO)
     {
-        $data = $createUserDTO->getData();
+        $data = $createUserDTO->getDataForModel();
         $data['password'] = Hash::make($data['password']);
 
         return User::create($data);

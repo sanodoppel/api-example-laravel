@@ -14,8 +14,9 @@ return new class extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->uuid('uuid')->after('id');
-            $table->string('nickname', 100)->unique()->after('name');
+            $table->string('first_name', 100)->after('email');
+            $table->string('last_name', 100)->after('first_name');
+            $table->string('phone', 100);
         });
     }
 
@@ -27,11 +28,9 @@ return new class extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('uuid');
-        });
-
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('nickname');
+            $table->dropColumn('first_name');
+            $table->dropColumn('last_name');
+            $table->dropColumn('phone');
         });
     }
 };

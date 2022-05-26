@@ -5,7 +5,7 @@ namespace App\Validation\Rules\User;
 use App\Validation\Rules\Rule;
 use JetBrains\PhpStorm\ArrayShape;
 
-class ResetPassword extends Rule
+abstract class ResetPassword extends Rule
 {
     /**
      * @return array
@@ -14,9 +14,9 @@ class ResetPassword extends Rule
     public static function rules(): array
     {
         return [
-            'email' => ['required', 'email', 'exists:users'],
-            'token' => ['required'],
-            'password' => ['required', 'between:8,45'],
+            'email' => ['required', 'email', 'exists:users', 'string'],
+            'token' => ['required', 'string'],
+            'password' => ['required', 'between:6,45', 'string'],
         ];
     }
 }

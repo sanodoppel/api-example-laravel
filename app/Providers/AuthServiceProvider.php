@@ -24,12 +24,5 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
-
-        $this->app
-            ->when(\PHPOpenSourceSaver\JWTAuth\Providers\Storage\Illuminate::class)
-            ->needs(\Illuminate\Contracts\Cache\Repository::class)
-            ->give(function () {
-                return cache()->store('jwt');
-            });
     }
 }

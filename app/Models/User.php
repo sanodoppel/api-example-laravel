@@ -13,7 +13,6 @@ class User extends Authenticatable implements JWTSubject
 {
     use HasFactory;
     use Notifiable;
-    use WithUuid;
 
     /**
      * The attributes that are mass assignable.
@@ -21,10 +20,11 @@ class User extends Authenticatable implements JWTSubject
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
         'email',
         'password',
-        'nickname'
+        'phone'
     ];
 
     /**

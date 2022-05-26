@@ -51,4 +51,17 @@ trait DataTransferObjectCollectionTrait
 
         return $data;
     }
+
+    /**
+     * @return array
+     */
+    public function getDataForModel(): array
+    {
+        $data = [];
+        foreach ($this->data as $dtoItem) {
+            $data[] = $dtoItem->getDataForModel();
+        }
+
+        return $data;
+    }
 }

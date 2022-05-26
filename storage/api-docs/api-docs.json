@@ -5,13 +5,13 @@
         "version": "1.0.0"
     },
     "paths": {
-        "/api/auth/login": {
+        "/api/user/sign-in": {
             "post": {
                 "tags": [
-                    "Auth"
+                    "User"
                 ],
-                "description": "User login",
-                "operationId": "8dcb70df1020986038d098cc08d05dae",
+                "description": "User sign-in",
+                "operationId": "e5bb9dc26a6be0c6023662f4a55a2fc0",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -35,65 +35,13 @@
                 }
             }
         },
-        "/api/auth/refresh": {
-            "post": {
-                "tags": [
-                    "Auth"
-                ],
-                "description": "Refresh token",
-                "operationId": "b2eae7a8032954d25b46c7ec6f489c68",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/AuthResource"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "auth_user": []
-                    }
-                ]
-            }
-        },
-        "/api/auth/logout": {
-            "post": {
-                "tags": [
-                    "Auth"
-                ],
-                "description": "Logout token",
-                "operationId": "69281b12abb272c76871f19cb17ca563",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/EmptyResource"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "auth_user": []
-                    }
-                ]
-            }
-        },
-        "/api/user/create": {
+        "/api/user/register": {
             "post": {
                 "tags": [
                     "User"
                 ],
-                "description": "Create new user",
-                "operationId": "a286e80786abff27a4c441322a18d3e4",
+                "description": "Register new user",
+                "operationId": "a659db0e36b3fa3df8ed5f05b3ef5690",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -117,50 +65,13 @@
                 }
             }
         },
-        "/api/user/validate/{field}": {
-            "post": {
-                "tags": [
-                    "User"
-                ],
-                "description": "Validate user field. Values: email, nickname",
-                "operationId": "1837420d84eb7711a8395ebd6c233da9",
-                "parameters": [
-                    {
-                        "name": "field",
-                        "in": "path",
-                        "description": "email|nickname"
-                    }
-                ],
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/ValidateUserFieldDTO"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/EmptyResource"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/user/password/forget": {
+        "/api/user/recover-password": {
             "post": {
                 "tags": [
                     "User"
                 ],
                 "description": "Password forget link sending",
-                "operationId": "b6ebbf956e62415d76490a50c05184df",
+                "operationId": "d6f99714cb2459f68328a01abd161ec1",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -184,13 +95,13 @@
                 }
             }
         },
-        "/api/user/password/reset": {
+        "/api/user/reset-passport": {
             "post": {
                 "tags": [
                     "User"
                 ],
-                "description": "Password restore",
-                "operationId": "4d5f4e7d6a85f4f309163ec6472b666b",
+                "description": "Password reset",
+                "operationId": "497c09983eadbeb7c4d820d734f1b689",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -230,13 +141,16 @@
             },
             "CreateUserDTO": {
                 "properties": {
-                    "nickname": {
+                    "firstName": {
+                        "type": "string"
+                    },
+                    "lastName": {
                         "type": "string"
                     },
                     "email": {
                         "type": "string"
                     },
-                    "name": {
+                    "phone": {
                         "type": "string"
                     },
                     "password": {
@@ -262,17 +176,6 @@
                         "type": "string"
                     },
                     "token": {
-                        "type": "string"
-                    }
-                },
-                "type": "object"
-            },
-            "ValidateUserFieldDTO": {
-                "properties": {
-                    "nickname": {
-                        "type": "string"
-                    },
-                    "email": {
                         "type": "string"
                     }
                 },

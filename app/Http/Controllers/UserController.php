@@ -15,6 +15,7 @@ use App\Http\Resources\FormErrorResource;
 use App\Services\AuthService;
 use App\Services\UserService;
 use App\Validation\Messages\ErrorEnum;
+use App\Validation\Rules\Auth;
 use App\Validation\Rules\Rule;
 use App\Validation\Rules\User\CreateUser;
 use App\Validation\Rules\User\ForgetPassword;
@@ -30,6 +31,7 @@ use Spatie\RouteAttributes\Attributes\Post;
 use Spatie\RouteAttributes\Attributes\Prefix;
 use Spatie\RouteAttributes\Attributes\Where;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 #[Prefix('api/user')]
 #[Where('field', 'email|nickname')]
@@ -40,14 +42,43 @@ class UserController extends Controller
     public function __construct(private UserService $userService)
     {
         parent::__construct();
-        $this->middleware('auth:api', ['except' => ['create', 'validateField', 'forgetPassword', 'resetPassword']]);
+        $this->middleware('auth:api', ['except' => ['login', 'create', 'forgetPassword', 'resetPassword']]);
     }
 
 
     /**
      * @OA\Post(
-     *     path="/api/user/create",
-     *     description="Create new user",
+     *     path="/api/user/sign-in",
+     *     description="User sign-in",
+     *     tags={"User"},
+     *     @OA\RequestBody(@OA\JsonContent(ref="#/components/schemas/AuthDTO")),
+     *     @OA\Response(response=200, description="OK", @OA\JsonContent(ref="#/components/schemas/AuthResource"))
+     * )
+     *
+     * @param Request $request
+     * @param AuthService $authService
+     * @return JsonResource
+     */
+    #[Post('sign-in', name: 'api_user_sign_in')]
+    public function login(Request $request, AuthService $authService): JsonResource
+    {
+        $validation = new Validation(Auth::rules(), Auth::messages());
+        $dto = new AuthDTO($request);
+
+        if (!$validation->validate($dto)) {
+            return new FormErrorResource($validation->getErrors());
+        }
+        $token = $authService->auth($dto);
+
+        return $token ?
+            new AuthResource($token) :
+            new ErrorResource(ErrorEnum::UNAUTHORIZED->name, Response::HTTP_UNAUTHORIZED);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/user/register",
+     *     description="Register new user",
      *     tags={"User"},
      *     @OA\RequestBody(@OA\JsonContent(ref="#/components/schemas/CreateUserDTO")),
      *     @OA\Response(response=201, description="OK", @OA\JsonContent(ref="#/components/schemas/AuthResource"))
@@ -57,7 +88,7 @@ class UserController extends Controller
      * @param AuthService $authService
      * @return JsonResource
      */
-    #[Post('create', name: 'api_user_create', middleware: 'api')]
+    #[Post('register', name: 'api_user_register')]
     public function create(Request $request, AuthService $authService): JsonResource
     {
         $validation = new Validation(CreateUser::rules(), CreateUser::messages());
@@ -74,42 +105,7 @@ class UserController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/user/validate/{field}",
-     *     description="Validate user field. Values: email, nickname",
-     *     tags={"User"},
-     *     @OA\Parameter(
-     *         name="field",
-     *         in="path",
-     *         description="email|nickname"
-     *     ),
-     *     @OA\RequestBody(@OA\JsonContent(ref="#/components/schemas/ValidateUserFieldDTO")),
-     *     @OA\Response(response=200, description="OK", @OA\JsonContent(ref="#/components/schemas/EmptyResource"))
-     * )
-     *
-     * @param Request $request
-     * @param string $field
-     * @return JsonResource
-     */
-    #[Post('validate/{field}', name: 'api_user_validate_field')]
-    public function validateField(Request $request, string $field): JsonResource
-    {
-        $validation = new Validation(
-            match ($field) {
-                'email' => ValidateUserEmail::rules(),
-                'nickname' => ValidateUserNickname::rules(),
-            },
-            Rule::messages()
-        );
-
-        $dto = new ValidateUserFieldDTO($request);
-        return $validation->validate($dto) ?
-            new EmptyResource() :
-            new FormErrorResource($validation->getErrors());
-    }
-
-    /**
-     * @OA\Post(
-     *     path="/api/user/password/forget",
+     *     path="/api/user/recover-password",
      *     description="Password forget link sending",
      *     tags={"User"},
      *     @OA\RequestBody(@OA\JsonContent(ref="#/components/schemas/ForgetPasswordDTO")),
@@ -124,7 +120,7 @@ class UserController extends Controller
      *
      * @return JsonResource
      */
-    #[Post('password/forget', name: 'api_auth_password_forget')]
+    #[Post('recover-password', name: 'api_user_recover_password')]
     public function forgetPassword(Request $request): JsonResource
     {
         $validation = new Validation(ForgetPassword::rules(), Rule::messages());
@@ -137,8 +133,8 @@ class UserController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/user/password/reset",
-     *     description="Password restore",
+     *     path="/api/user/reset-passport",
+     *     description="Password reset",
      *     tags={"User"},
      *     @OA\RequestBody(@OA\JsonContent(ref="#/components/schemas/ResetPasswordDTO")),
      *     @OA\Response(
@@ -152,7 +148,7 @@ class UserController extends Controller
      * @param AuthService $authService
      * @return JsonResource
      */
-    #[Post('password/reset', name: 'api_auth_password_reset')]
+    #[Post('reset-passport', name: 'api_user_reset_passport')]
     public function resetPassword(Request $request, AuthService $authService): JsonResource
     {
         $validation = new Validation(ResetPassword::rules(), Rule::messages());

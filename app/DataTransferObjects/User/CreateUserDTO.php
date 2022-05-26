@@ -7,9 +7,10 @@ use App\DataTransferObjects\DataTransferObjectTrait;
 
 /**
  * @OA\Schema(
- *      @OA\Property(property="nickname", type="string"),
+ *      @OA\Property(property="firstName", type="string"),
+ *      @OA\Property(property="lastName", type="string"),
  *      @OA\Property(property="email", type="string"),
- *      @OA\Property(property="name", type="string"),
+ *      @OA\Property(property="phone", type="string"),
  *      @OA\Property(property="password", type="string"),
  * )
  */
@@ -17,29 +18,30 @@ class CreateUserDTO implements DataTransferObject
 {
     use DataTransferObjectTrait;
 
-    protected readonly ?string $name;
+    protected readonly ?string $firstName;
 
-    protected readonly ?string $nickname;
+    protected readonly ?string $lastName;
 
     protected readonly ?string $email;
 
-    protected readonly ?string $password;
+    protected readonly ?string $phone;
 
+    protected readonly ?string $password;
 
     /**
      * @return string|null
      */
-    public function getName(): ?string
+    public function getFirstName(): ?string
     {
-        return $this->name;
+        return $this->firstName;
     }
 
     /**
      * @return string|null
      */
-    public function getNickname(): ?string
+    public function getLastName(): ?string
     {
-        return $this->nickname;
+        return $this->lastName;
     }
 
     /**
@@ -48,6 +50,14 @@ class CreateUserDTO implements DataTransferObject
     public function getEmail(): ?string
     {
         return $this->email;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPhone(): ?string
+    {
+        return $this->phone;
     }
 
     /**

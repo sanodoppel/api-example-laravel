@@ -15,7 +15,7 @@ abstract class Auth extends Rule
     {
         return [
             'email' => ['required', 'email'],
-            'password' => ['required', 'between:8,45'],
+            'password' => ['required', 'between:6,45'],
         ];
     }
 }

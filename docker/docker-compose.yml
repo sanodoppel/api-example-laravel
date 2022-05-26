@@ -1,0 +1,76 @@
+version: '3.3'
+
+services:
+    nginx_api-example-laravel:
+        container_name: nginx_api-example-laravel
+        build:
+            context: nginx
+        volumes:
+            - ${APP_PATH}:/app
+        depends_on:
+            - php_api-example-laravel
+        ports:
+            - 80:80
+        networks:
+            api-example-laravel:
+                ipv4_address: 10.5.0.2
+
+    php_api-example-laravel:
+        container_name: php_api-example-laravel
+        build:
+            context: php8-fpm
+            args:
+                TIMEZONE: ${TIMEZONE}
+        networks:
+            api-example-laravel:
+                ipv4_address: 10.5.0.3
+        volumes:
+            - ${APP_PATH}:/app
+        links:
+            - mysql_api-example-laravel
+        environment:
+            XDEBUG_CONFIG: remote_host=${IP_ADDRESS}
+
+    mysql_api-example-laravel:
+        container_name: mysql_api-example-laravel
+        image: mysql:8
+        volumes:
+            - mysql_api-example-laravel_data_container:/var/lib/mysql
+        environment:
+            MYSQL_DATABASE: ${DB_NAME}
+            MYSQL_USER: ${DB_USER}
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+        ports:
+            - 3306:3306
+        networks:
+            api-example-laravel:
+                ipv4_address: 10.5.0.4
+
+    adminer_api-example-laravel:
+        container_name: adminer_api-example-laravel
+        image: adminer
+        ports:
+            - 8080:8080
+        networks:
+            api-example-laravel:
+                ipv4_address: 10.5.0.5
+
+    mailcatcher_api-example-laravel:
+        container_name: mailcatcher_api-example-laravel
+        image: schickling/mailcatcher
+        ports:
+            - 1080:1080
+        networks:
+            api-example-laravel:
+                ipv4_address: 10.5.0.6
+
+networks:
+    api-example-laravel:
+        driver: bridge
+        ipam:
+            config:
+            - subnet: 10.5.0.0/16
+
+volumes:
+    mysql_api-example-laravel_data_container:

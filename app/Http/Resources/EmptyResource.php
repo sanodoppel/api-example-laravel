@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Http\AppResponse;
 use Illuminate\Http\Request;
+use stdClass;
 
 /**
  * @OA\Schema(
@@ -22,6 +23,6 @@ class EmptyResource extends Resource
      */
     public function toArray($request)
     {
-        return AppResponse::prepare(new \stdClass(), $this->status);
+        return AppResponse::prepare(new stdClass(), $this->status);
     }
 }

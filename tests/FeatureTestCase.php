@@ -15,7 +15,7 @@ abstract class FeatureTestCase extends BaseTestCase
         $user = User::find(1);
         $response = $this
             ->postJson(
-                route('api_auth_login', [], false),
+                route('api_user_sign_in', [], false),
                 ['email' => $user->email, 'password' => UserFactory::PASSWORD]
             );
 

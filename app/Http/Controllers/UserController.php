@@ -3,34 +3,35 @@
 namespace App\Http\Controllers;
 
 use App\DataTransferObjects\AuthDTO;
+use App\DataTransferObjects\DataTransferObjectCollection;
+use App\DataTransferObjects\User\AddCompaniesDTO;
 use App\DataTransferObjects\User\CreateUserDTO;
 use App\DataTransferObjects\User\ForgetPasswordDTO;
 use App\DataTransferObjects\User\ResetPasswordDTO;
-use App\DataTransferObjects\User\ValidateUserFieldDTO;
 use App\Http\Resources\AuthResource;
 use App\Http\Resources\EmptyResource;
 use App\Http\Resources\ErrorResource;
 use App\Http\Resources\ForgetPasswordResource;
 use App\Http\Resources\FormErrorResource;
+use App\Http\Resources\UserCompaniesCollection;
 use App\Services\AuthService;
 use App\Services\UserService;
 use App\Validation\Messages\ErrorEnum;
 use App\Validation\Rules\Auth;
 use App\Validation\Rules\Rule;
+use App\Validation\Rules\User\AddCompanies;
 use App\Validation\Rules\User\CreateUser;
 use App\Validation\Rules\User\ForgetPassword;
 use App\Validation\Rules\User\ResetPassword;
-use App\Validation\Rules\User\ValidateUserEmail;
-use App\Validation\Rules\User\ValidateUserNickname;
 use App\Validation\Validation;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Password;
+use Spatie\RouteAttributes\Attributes\Get;
 use Spatie\RouteAttributes\Attributes\Post;
 use Spatie\RouteAttributes\Attributes\Prefix;
 use Spatie\RouteAttributes\Attributes\Where;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 #[Prefix('api/user')]
@@ -97,7 +98,7 @@ class UserController extends Controller
         if ($validation->validate($dto)) {
             $this->userService->create($dto);
 
-            return new AuthResource($authService->auth(new AuthDTO($request)), JsonResponse::HTTP_CREATED);
+            return new AuthResource($authService->auth(new AuthDTO($request)), Response::HTTP_CREATED);
         } else {
             return new FormErrorResource($validation->getErrors());
         }
@@ -157,9 +158,60 @@ class UserController extends Controller
         if ($validation->validate($dto)) {
             return $this->userService->resetPassword($dto) === Password::PASSWORD_RESET ?
                 new AuthResource($authService->auth(new AuthDTO($request))) :
-                new ErrorResource(ErrorEnum::ERROR->name, JsonResponse::HTTP_BAD_REQUEST);
+                new ErrorResource(ErrorEnum::ERROR->name, Response::HTTP_BAD_REQUEST);
         } else {
             return new FormErrorResource($validation->getErrors());
         }
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/user/companies",
+     *     description="Get companies of user",
+     *     tags={"User"},
+     *     security={{"auth_user":{}}},
+     *     @OA\Response(
+     *         response=201,
+     *         description="OK",
+     *         @OA\JsonContent(ref="#/components/schemas/UserCompaniesCollection")
+     *     )
+     * )
+     * @return JsonResource
+     */
+    #[Get('companies', name: 'api_user_get_companies')]
+    public function getCompanies(): JsonResource
+    {
+        return new UserCompaniesCollection(auth()->user()->companies());
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/user/companies",
+     *     description="Add companies of user",
+     *     tags={"User"},
+     *     security={{"auth_user":{}}},
+     *     @OA\RequestBody(@OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/AddCompaniesDTO"))),
+     *     @OA\Response(
+     *         response=201,
+     *         description="OK",
+     *         @OA\JsonContent(ref="#/components/schemas/EmptyResource")
+     *     )
+     * )
+     *
+     * @param Request $request
+     * @return JsonResource
+     */
+    #[Post('companies', name: 'api_user_add_companies')]
+    public function addCompanies(Request $request): JsonResource
+    {
+        $validation = new Validation(AddCompanies::rules(), AddCompanies::messages());
+        $dto = new DataTransferObjectCollection(AddCompaniesDTO::class, $request);
+
+        if (!$validation->validate($dto)) {
+            return new FormErrorResource($validation->getErrors());
+        }
+        $this->userService->addCompanies(auth()->user(), $dto);
+
+        return new EmptyResource(null, Response::HTTP_CREATED);
     }
 }

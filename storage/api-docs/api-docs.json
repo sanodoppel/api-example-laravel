@@ -124,6 +124,68 @@
                     }
                 }
             }
+        },
+        "/api/user/companies": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "description": "Get companies of user",
+                "operationId": "2611faf9f70e4c42f15879ff03f45c56",
+                "responses": {
+                    "201": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserCompaniesCollection"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "auth_user": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "description": "Add companies of user",
+                "operationId": "0c1a79480e45509a120652230aff40cb",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/AddCompaniesDTO"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EmptyResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "auth_user": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -134,6 +196,20 @@
                         "type": "string"
                     },
                     "password": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "AddCompaniesDTO": {
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "phone": {
+                        "type": "string"
+                    },
+                    "description": {
                         "type": "string"
                     }
                 },
@@ -234,6 +310,37 @@
                                 }
                             },
                             "type": "object"
+                        }
+                    },
+                    "status": {
+                        "type": "integer"
+                    },
+                    "meta": {
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "UserCompaniesCollection": {
+                "properties": {
+                    "result": {
+                        "type": "array",
+                        "items": {
+                            "type": "array",
+                            "items": {
+                                "properties": {
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "phone": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
                         }
                     },
                     "status": {

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Boot\WithUuid;
 use App\Notifications\ResetPasswordNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
@@ -69,5 +70,13 @@ class User extends Authenticatable implements JWTSubject
     {
         $url = env('APP_CLIENT_URL') . '/user/recover?email=' . $this->email . '&token=' . $token;
         $this->notify(new ResetPasswordNotification($url));
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function companies(): HasMany
+    {
+        return $this->hasMany(Company::class);
     }
 }

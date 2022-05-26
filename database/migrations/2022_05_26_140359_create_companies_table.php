@@ -13,10 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('first_name', 100)->after('email');
-            $table->string('last_name', 100)->after('first_name');
+        Schema::create('companies', function (Blueprint $table) {
+            $table->id();
+            $table->string('title', 100);
+            $table->text('description')->nullable();
             $table->string('phone', 15);
+            $table->integer('user_id', false, true);
+            $table->foreign('user_id', 'foreign_companies_user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->timestamps();
         });
     }
 
@@ -27,10 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('first_name');
-            $table->dropColumn('last_name');
-            $table->dropColumn('phone');
-        });
+        Schema::dropIfExists('companies');
     }
 };

@@ -96,4 +96,24 @@ class UserTest extends FeatureTestCase
         $response = $this->postJson(route('api_user_reset_passport', [], false), $data);
         $response->assertStatus(JsonResponse::HTTP_BAD_REQUEST);
     }
+
+    public function testAddCompanies()
+    {
+        $data = [
+            [
+                'title' => 'test',
+                'phone' => 123456789,
+                'description' => 'test'
+            ]
+        ];
+
+        $response = $this->addAuthorizationHeader()->postJson(route('api_user_add_companies', [], false), $data);
+        $response->assertStatus(JsonResponse::HTTP_CREATED);
+    }
+
+    public function testGetCompanies()
+    {
+        $response = $this->addAuthorizationHeader()->get(route('api_user_add_companies', [], false));
+        $response->assertStatus(JsonResponse::HTTP_OK);
+    }
 }

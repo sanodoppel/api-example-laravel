@@ -5,7 +5,7 @@ namespace App\Validation\Rules\User;
 use App\Validation\Rules\Rule;
 use JetBrains\PhpStorm\ArrayShape;
 
-class ValidateUserEmail extends Rule
+abstract class ValidateUserEmail extends Rule
 {
     /**
      * @return array
@@ -14,7 +14,7 @@ class ValidateUserEmail extends Rule
     public static function rules(): array
     {
         return [
-            'email' => ['required', 'email', 'unique:users'],
+            'email' => ['required', 'email', 'unique:users', 'string'],
         ];
     }
 }

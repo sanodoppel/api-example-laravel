@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DataTransferObjects\AuthDTO;
+use App\DataTransferObjects\AuthRefreshTokenDTO;
 use App\Http\Resources\AuthResource;
 use App\Http\Resources\EmptyResource;
 use App\Http\Resources\ErrorResource;
@@ -10,7 +11,10 @@ use App\Http\Resources\FormErrorResource;
 use App\Services\AuthService;
 use App\Validation\Messages\ErrorEnum;
 use App\Validation\Rules\Auth;
+use App\Validation\Rules\Fingerprint;
 use App\Validation\Validation;
+use Exception;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -26,7 +30,6 @@ class AuthController extends Controller
     public function __construct(protected AuthService $authService)
     {
         parent::__construct();
-        $this->middleware('auth:api', ['except' => ['login']]);
     }
 
     /**
@@ -38,9 +41,9 @@ class AuthController extends Controller
      *     @OA\Response(response=200, description="OK", @OA\JsonContent(ref="#/components/schemas/AuthResource"))
      * )
      *
-
      * @param Request $request
      * @return JsonResource
+     * @throws Exception
      */
     #[Post('login', name: 'api_auth_login')]
     public function login(Request $request): JsonResource
@@ -51,10 +54,10 @@ class AuthController extends Controller
         if (!$validation->validate($dto)) {
             return new FormErrorResource($validation->getErrors());
         }
-        $token = $this->authService->auth($dto);
+        $response = $this->authService->auth($dto);
 
-        return $token ?
-            new AuthResource($token) :
+        return $response ?
+            new AuthResource($response) :
             new ErrorResource(ErrorEnum::UNAUTHORIZED->name, JsonResponse::HTTP_UNAUTHORIZED);
     }
 
@@ -63,16 +66,27 @@ class AuthController extends Controller
      *     path="/api/auth/refresh",
      *     description="Refresh token",
      *     tags={"Auth"},
+     *     @OA\RequestBody(@OA\JsonContent(ref="#/components/schemas/AuthRefreshTokenDTO")),
      *     @OA\Response(response=200, description="OK", @OA\JsonContent(ref="#/components/schemas/AuthResource")),
      *     security={{"auth_user":{}}}
      * )
      *
+     * @param Request $request
      * @return JsonResource
+     * @throws AuthenticationException
      */
-    #[Post('refresh', name: 'api_auth_refresh')]
-    public function refresh(): JsonResource
+    #[Post('refresh', name: 'api_auth_refresh', middleware: 'refresh.token')]
+    public function refresh(Request $request): JsonResource
     {
-        return new AuthResource($this->authService->refresh());
+        $dto = new AuthRefreshTokenDTO($request);
+        $validation = new Validation(Fingerprint::rules(), Auth::messages());
+        if (!$validation->validate($dto)) {
+            return new FormErrorResource($validation->getErrors());
+        }
+
+        return new AuthResource(
+            $this->authService->refresh($dto)
+        );
     }
 
     /**
@@ -80,17 +94,24 @@ class AuthController extends Controller
      *     path="/api/auth/logout",
      *     description="Logout token",
      *     tags={"Auth"},
-     *     @OA\Response(response=200, description="OK", @OA\JsonContent(ref="#/components/schemas/EmptyResource")),
-     *     security={{"auth_user":{}}}
+     *     @OA\RequestBody(@OA\JsonContent(ref="#/components/schemas/AuthRefreshTokenDTO")),
+     *     @OA\Response(response=200, description="OK", @OA\JsonContent(ref="#/components/schemas/EmptyResource"))
      * )
      *
+     * @param Request $request
      * @return JsonResource
+     * @throws AuthenticationException
      */
     #[Post('logout', name: 'api_auth_logout')]
-    public function logout(): JsonResource
+    public function logout(Request $request): JsonResource
     {
-        $this->authService->logout();
+        $dto = new AuthRefreshTokenDTO($request);
+        $validation = new Validation(Fingerprint::rules(), Auth::messages());
+        if (!$validation->validate($dto)) {
+            return new FormErrorResource($validation->getErrors());
+        }
 
+        $this->authService->logout(new AuthRefreshTokenDTO($request));
         return new EmptyResource();
     }
 }

@@ -92,13 +92,6 @@ return [
             'driver' => 'octane',
         ],
 
-        'jwt' => [
-            'driver' => 'database',
-            'table' => 'jwt_cache',
-            'connection' => null,
-            'lock_connection' => null,
-        ],
-
     ],
 
     /*

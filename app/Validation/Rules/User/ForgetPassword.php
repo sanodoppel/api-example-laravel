@@ -5,7 +5,7 @@ namespace App\Validation\Rules\User;
 use App\Validation\Rules\Rule;
 use JetBrains\PhpStorm\ArrayShape;
 
-class ForgetPassword extends Rule
+abstract class ForgetPassword extends Rule
 {
     /**
      * @return array
@@ -14,7 +14,7 @@ class ForgetPassword extends Rule
     public static function rules(): array
     {
         return [
-            'email' => ['required', 'email', 'exists:users'],
+            'email' => ['required', 'email', 'exists:users', 'string'],
         ];
     }
 }

@@ -22,6 +22,7 @@ use App\Validation\Rules\User\ResetPassword;
 use App\Validation\Rules\User\ValidateUserEmail;
 use App\Validation\Rules\User\ValidateUserNickname;
 use App\Validation\Validation;
+use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -56,6 +57,7 @@ class UserController extends Controller
      * @param Request $request
      * @param AuthService $authService
      * @return JsonResource
+     * @throws Exception
      */
     #[Post('create', name: 'api_user_create', middleware: 'api')]
     public function create(Request $request, AuthService $authService): JsonResource
@@ -124,7 +126,7 @@ class UserController extends Controller
      *
      * @return JsonResource
      */
-    #[Post('password/forget', name: 'api_auth_password_forget')]
+    #[Post('password/forget', name: 'api_user_password_forget')]
     public function forgetPassword(Request $request): JsonResource
     {
         $validation = new Validation(ForgetPassword::rules(), Rule::messages());
@@ -151,8 +153,9 @@ class UserController extends Controller
      * @param Request $request
      * @param AuthService $authService
      * @return JsonResource
+     * @throws Exception
      */
-    #[Post('password/reset', name: 'api_auth_password_reset')]
+    #[Post('password/reset', name: 'api_user_password_reset')]
     public function resetPassword(Request $request, AuthService $authService): JsonResource
     {
         $validation = new Validation(ResetPassword::rules(), Rule::messages());

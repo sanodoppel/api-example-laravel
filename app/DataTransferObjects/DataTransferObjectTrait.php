@@ -41,4 +41,17 @@ trait DataTransferObjectTrait
 
         return $data;
     }
+
+    /**
+     * @return array
+     */
+    public function getDataForModel(): array
+    {
+        $data = [];
+        foreach (get_object_vars($this) as $key => $value) {
+            $data[strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $key))] = $value;
+        }
+
+        return $data;
+    }
 }

@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -24,12 +23,5 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
-
-        $this->app
-            ->when(\PHPOpenSourceSaver\JWTAuth\Providers\Storage\Illuminate::class)
-            ->needs(\Illuminate\Contracts\Cache\Repository::class)
-            ->give(function () {
-                return cache()->store('jwt');
-            });
     }
 }

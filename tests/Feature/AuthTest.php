@@ -10,9 +10,9 @@ use Tests\FeatureTestCase;
 class AuthTest extends FeatureTestCase
 {
     /**
-     * @return string
+     * @return array
      */
-    public function testLogin(): string
+    public function testLogin(): array
     {
         $user = User::find(1);
         $response = $this->postJson(
@@ -20,54 +20,63 @@ class AuthTest extends FeatureTestCase
             ['email' => $user->email, 'password' => UserFactory::PASSWORD]
         );
         $response->assertStatus(JsonResponse::HTTP_OK);
+        $responseData = $response->json();
         $token = $response->json()['result']['accessToken'];
-        $this->assertIsString($token);
+        $refreshToken = $responseData['result']['refreshToken'];
+        $fingerprint = $responseData['result']['fingerprint'];
 
-        return $token;
+        $this->assertNotEmpty($token);
+        $this->assertNotEmpty($refreshToken);
+        $this->assertNotEmpty($fingerprint);
+
+        return ['refreshToken' => $refreshToken, 'fingerprint' => $fingerprint];
     }
 
     /**
      * @depends testLogin
-     * @param string $token
-     * @return string
+     * @param array $refreshData
      */
-    public function testRefresh(string $token): string
+    public function testRefresh(array $refreshData)
     {
-        $response = $this->withHeader('Authorization', 'Bearer ' . $token)->postJson(
+        $response = $this->withHeader('Authorization', 'Bearer ' . $refreshData['refreshToken'])->postJson(
             route('api_auth_refresh', [], false),
-            []
+            ['fingerprint' => $refreshData['fingerprint']]
         );
         $response->assertStatus(JsonResponse::HTTP_OK);
-        $newToken = $response->json()['result']['accessToken'];
-        $this->assertIsString($newToken);
+        $this->assertNotEmpty($response->json()['result']['accessToken']);
+        $this->assertEquals($refreshData['fingerprint'], $response->json()['result']['fingerprint']);
 
         $this->refreshApplication();
-        $response = $this->withHeader('Authorization', 'Bearer ' . $token)->postJson(
+        $response = $this->withHeader('Authorization', 'Bearer ' . $refreshData['refreshToken'])->postJson(
             route('api_auth_refresh', [], false),
-            []
+            ['fingerprint' => $refreshData['fingerprint']]
         );
         $response->assertStatus(JsonResponse::HTTP_UNAUTHORIZED);
-
-        return $newToken;
     }
 
     /**
-     * @depends testRefresh
-     * @param string $token
      * @return void
      */
-    public function testLogout(string $token)
+    public function testLogout()
     {
-        $response = $this->withHeader('Authorization', 'Bearer ' . $token)->postJson(
+        $user = User::find(1);
+        $response = $this->postJson(
+            route('api_auth_login', [], false),
+            ['email' => $user->email, 'password' => UserFactory::PASSWORD]
+        );
+
+        $fingerprint = $response->json()['result']['fingerprint'];
+
+        $response = $this->postJson(
             route('api_auth_logout', [], false),
-            []
+            ['fingerprint' => $fingerprint]
         );
         $response->assertStatus(JsonResponse::HTTP_OK);
 
         $this->refreshApplication();
-        $response = $this->withHeader('Authorization', 'Bearer ' . $token)->postJson(
+        $response = $this->postJson(
             route('api_auth_logout', [], false),
-            []
+            ['fingerprint' => $fingerprint]
         );
         $response->assertStatus(JsonResponse::HTTP_UNAUTHORIZED);
     }

@@ -14,4 +14,9 @@ interface DataTransferObject
      * @return array
      */
     public function getData(): array;
+
+    /**
+     * @return array
+     */
+    public function getDataForModel(): array;
 }

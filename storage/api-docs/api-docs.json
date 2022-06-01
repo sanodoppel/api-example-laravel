@@ -42,6 +42,15 @@
                 ],
                 "description": "Refresh token",
                 "operationId": "b2eae7a8032954d25b46c7ec6f489c68",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthRefreshTokenDTO"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -68,6 +77,15 @@
                 ],
                 "description": "Logout token",
                 "operationId": "69281b12abb272c76871f19cb17ca563",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthRefreshTokenDTO"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -79,12 +97,7 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "auth_user": []
-                    }
-                ]
+                }
             }
         },
         "/api/user/create": {
@@ -228,6 +241,14 @@
                 },
                 "type": "object"
             },
+            "AuthRefreshTokenDTO": {
+                "properties": {
+                    "fingerprint": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
             "CreateUserDTO": {
                 "properties": {
                     "nickname": {
@@ -285,6 +306,12 @@
                         "items": {
                             "properties": {
                                 "accessToken": {
+                                    "type": "string"
+                                },
+                                "refreshToken": {
+                                    "type": "string"
+                                },
+                                "fingerprint": {
                                     "type": "string"
                                 },
                                 "tokenType": {

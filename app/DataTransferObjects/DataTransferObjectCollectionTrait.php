@@ -29,7 +29,12 @@ trait DataTransferObjectCollectionTrait
     public function setData(array $data): void
     {
         $result = [];
+
         foreach ($data as $dtoItem) {
+            if (!is_array($dtoItem)) {
+                continue;
+            }
+
             $dto = new $this->dtoName();
             $dto->setData($dtoItem);
 
@@ -47,6 +52,19 @@ trait DataTransferObjectCollectionTrait
         $data = [];
         foreach ($this->data as $dtoItem) {
             $data[] = $dtoItem->getData();
+        }
+
+        return $data;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDataForModel(): array
+    {
+        $data = [];
+        foreach ($this->data as $dtoItem) {
+            $data[] = $dtoItem->getDataForModel();
         }
 
         return $data;

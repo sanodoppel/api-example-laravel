@@ -54,13 +54,13 @@ class UserTest extends FeatureTestCase
         $data = [
             'email' => 'not_exist_email@example.test',
         ];
-        $response = $this->postJson(route('api_auth_password_forget', ['field' => 'email'], false), $data);
+        $response = $this->postJson(route('api_user_password_forget', ['field' => 'email'], false), $data);
         $response->assertStatus(JsonResponse::HTTP_BAD_REQUEST);
 
         //ok
         $user = User::factory()->create();
         $data['email'] = $user->email;
-        $response = $this->postJson(route('api_auth_password_forget', ['field' => 'email'], false), $data);
+        $response = $this->postJson(route('api_user_password_forget', ['field' => 'email'], false), $data);
         $response->assertStatus(JsonResponse::HTTP_OK);
     }
 
@@ -76,18 +76,18 @@ class UserTest extends FeatureTestCase
         ];
 
         //wrong token send
-        $response = $this->postJson(route('api_auth_password_reset', [], false), $data);
+        $response = $this->postJson(route('api_user_password_reset', [], false), $data);
         $response->assertStatus(JsonResponse::HTTP_BAD_REQUEST);
 
         //ok
         $data['token'] = $token;
-        $response = $this->postJson(route('api_auth_password_reset', [], false), $data);
+        $response = $this->postJson(route('api_user_password_reset', [], false), $data);
         $response->assertStatus(JsonResponse::HTTP_OK);
         $token = $response->json()['result']['accessToken'];
         $this->assertIsString($token);
 
         //duplicated
-        $response = $this->postJson(route('api_auth_password_reset', [], false), $data);
+        $response = $this->postJson(route('api_user_password_reset', [], false), $data);
         $response->assertStatus(JsonResponse::HTTP_BAD_REQUEST);
     }
 }

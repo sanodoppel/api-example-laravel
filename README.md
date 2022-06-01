@@ -21,9 +21,9 @@ Inside container run
 
     composer install
 
-Application is available at http://10.10.0.1
+Application is available at http://10.5.0.1
 
-Documentation: http://10.10.0.1/documentation/api
+Documentation: http://10.5.0.1/documentation/api
 
 ### How to generate the certificate for jwt
     

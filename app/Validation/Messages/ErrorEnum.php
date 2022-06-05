@@ -9,4 +9,5 @@ enum ErrorEnum
     case UNAUTHORIZED;
     case UNAUTHENTICATED;
     case THROTTLED;
+    case WRONG_PASSWORD;
 }

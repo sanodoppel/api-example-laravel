@@ -16,7 +16,7 @@ abstract class ResetPassword extends Rule
         return [
             'email' => ['required', 'email', 'exists:users', 'string'],
             'token' => ['required', 'string'],
-            'password' => ['required', 'between:8,45', 'string'],
+            'password' => Rule::PASSWORD_RULE,
         ];
     }
 }

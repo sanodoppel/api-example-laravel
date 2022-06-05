@@ -15,8 +15,8 @@ abstract class CreateUser extends Rule
     {
         return array_merge(
             [
-                'name' => ['required', 'regex:/^[a-zA-Z]+ [a-zA-Z]+$/', 'string'],
-                'password' => ['required', 'between:8,45', 'string'],
+                'name' => Rule::NAME_RULE,
+                'password' => Rule::PASSWORD_RULE,
             ],
             ValidateUserNickname::rules(),
             ValidateUserEmail::rules()

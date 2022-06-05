@@ -12,7 +12,8 @@ use Illuminate\Http\Request;
  *         @OA\Property(property="refreshToken", type="string"),
  *         @OA\Property(property="fingerprint", type="string"),
  *         @OA\Property(property="tokenType", type="string"),
- *         @OA\Property(property="expiresIn", type="integer")
+ *         @OA\Property(property="accessTokenExpiredIn", type="integer"),
+ *         @OA\Property(property="refreshTokenExpiredIn", type="integer")
  *     )),
  *     @OA\Property(property="status", type="integer"),
  *     @OA\Property(property="meta", type="object")
@@ -33,7 +34,8 @@ class AuthResource extends Resource
             'refreshToken' => $this->resource['refreshToken'],
             'fingerprint' => $this->resource['fingerprint'],
             'tokenType' => 'Bearer',
-            'expiresIn' => $this->resource['expiresIn']
+            'accessTokenExpiredIn' => $this->resource['accessTokenExpiredIn'],
+            'refreshTokenExpiredIn' => $this->resource['refreshTokenExpiredIn'],
         ], $this->status);
     }
 }

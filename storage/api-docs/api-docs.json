@@ -226,6 +226,100 @@
                     }
                 }
             }
+        },
+        "/api/user": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "description": "Get current user",
+                "operationId": "22ea85303059d4f2d15556c1c9fd65d2",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "auth_user": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "User"
+                ],
+                "description": "Update current user",
+                "operationId": "fd4f39f7820d3f3cbc259c5b30fed830",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateUserDTO"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "auth_user": []
+                    }
+                ]
+            }
+        },
+        "/api/user/password/change": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "description": "Change restore",
+                "operationId": "552949b446745542733ef11c816c41b7",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ChangePasswordDTO"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "auth_user": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -244,6 +338,17 @@
             "AuthRefreshTokenDTO": {
                 "properties": {
                     "fingerprint": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "ChangePasswordDTO": {
+                "properties": {
+                    "currentPassword": {
+                        "type": "string"
+                    },
+                    "newPassword": {
                         "type": "string"
                     }
                 },
@@ -288,6 +393,20 @@
                 },
                 "type": "object"
             },
+            "UpdateUserDTO": {
+                "properties": {
+                    "nickname": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
             "ValidateUserFieldDTO": {
                 "properties": {
                     "nickname": {
@@ -317,7 +436,10 @@
                                 "tokenType": {
                                     "type": "string"
                                 },
-                                "expiresIn": {
+                                "accessTokenExpiredIn": {
+                                    "type": "integer"
+                                },
+                                "refreshTokenExpiredIn": {
                                     "type": "integer"
                                 }
                             },
@@ -354,6 +476,37 @@
                         "items": {
                             "properties": {
                                 "status": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "status": {
+                        "type": "integer"
+                    },
+                    "meta": {
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "UserResource": {
+                "properties": {
+                    "result": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "type": "string"
+                                },
+                                "name": {
+                                    "type": "string"
+                                },
+                                "email": {
+                                    "type": "string"
+                                },
+                                "nickname": {
                                     "type": "string"
                                 }
                             },

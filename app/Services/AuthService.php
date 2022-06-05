@@ -81,6 +81,15 @@ class AuthService
 
     /**
      * @param User $user
+     * @return void
+     */
+    public function logoutForUser(User $user): void
+    {
+        RefreshToken::where(['user_id' => $user->id])->delete();
+    }
+
+    /**
+     * @param User $user
      * @param $fingerprint
      * @return array
      * @throws Exception
@@ -155,7 +164,8 @@ class AuthService
             'accessToken' => $accessToken,
             'refreshToken' => $refreshToken,
             'fingerprint' => $fingerprint,
-            'expiresIn' => time() + auth()->factory()->getTTL() * 60
+            'accessTokenExpiredIn' => time() + auth()->factory()->getTTL() * 60,
+            'refreshTokenExpiredIn' => time() + env('REFRESH_TOKEN_TTL') * 60
         ];
     }
 }

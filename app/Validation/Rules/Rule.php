@@ -8,6 +8,13 @@ use JetBrains\PhpStorm\ArrayShape;
 
 abstract class Rule implements RuleInterface
 {
+    protected const PASSWORD_RULE = ['required', 'between:8,45', 'string'];
+    protected const NAME_RULE = [
+        'required',
+        'regex:/^([a-zA-Z]{2,}\s[a-zA-Z]{1,}\'?-?[a-zA-Z]{1,}\s?([a-zA-Z]{1,})?)/',
+        'string'
+    ];
+
     abstract public static function rules(): array;
 
     /**
@@ -25,6 +32,7 @@ abstract class Rule implements RuleInterface
             'string' => FormMessageEnum::NOT_STRING->name,
             'digits_between' => FormMessageEnum::DIGIT_WRONG_LENGTH->name,
             'uuid' => FormMessageEnum::NOT_UUID->name,
+            'alpha_dash' => FormMessageEnum::WRONG_FORMAT->name,
         ];
     }
 }

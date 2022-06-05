@@ -10,9 +10,16 @@ abstract class FeatureTestCase extends BaseTestCase
 {
     use CreatesApplication;
 
-    public function addAuthorizationHeader(): static
+    /**
+     * @param User|null $user
+     * @return $this
+     */
+    public function addAuthorizationHeader(User $user = null): static
     {
-        $user = User::find(1);
+        if (!$user) {
+            $user = User::find(1);
+        }
+
         $response = $this
             ->postJson(
                 route('api_auth_login', [], false),
@@ -20,6 +27,7 @@ abstract class FeatureTestCase extends BaseTestCase
             );
 
         $token = $response->json()['result']['accessToken'];
+
         $this->withHeader('Authorization', 'Bearer ' . $token);
 
         return $this;

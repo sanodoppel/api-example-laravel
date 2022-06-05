@@ -14,8 +14,7 @@ abstract class ValidateUserNickname extends Rule
     public static function rules(): array
     {
         return [
-
-            'nickname' => ['required', 'unique:users', 'string'],
+            'nickname' => ['required', 'alpha_dash' ,'unique:users', 'string'],
         ];
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Routing\Middleware\SubstituteBindings;
+
 return [
     /*
      *  Automatic registration of routes will only happen if this setting is `true`
@@ -18,6 +20,6 @@ return [
      * This middleware will be applied to all routes.
      */
     'middleware' => [
-        \Illuminate\Routing\Middleware\SubstituteBindings::class
+        SubstituteBindings::class
     ]
 ];

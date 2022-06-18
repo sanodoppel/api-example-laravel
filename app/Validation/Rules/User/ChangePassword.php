@@ -5,16 +5,17 @@ namespace App\Validation\Rules\User;
 use App\Validation\Rules\Rule;
 use JetBrains\PhpStorm\ArrayShape;
 
-abstract class ValidateUserEmail extends Rule
+abstract class ChangePassword extends Rule
 {
     /**
      * @return array
      */
-    #[ArrayShape(['email' => "string[]"])]
+    #[ArrayShape(['currentPassword' => "string[]", 'newPassword' => "string[]"])]
     public static function rules(): array
     {
         return [
-            'email' => ['required', 'email', 'unique:users,email', 'string'],
+            'currentPassword' => Rule::PASSWORD_RULE,
+            'newPassword' => Rule::PASSWORD_RULE
         ];
     }
 }

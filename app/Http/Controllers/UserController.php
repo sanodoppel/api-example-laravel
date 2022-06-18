@@ -26,6 +26,7 @@ use App\Validation\Rules\User\ResetPassword;
 use App\Validation\Rules\User\UpdateUser;
 use App\Validation\Rules\User\ValidateUserEmail;
 use App\Validation\Rules\User\ValidateUserNickname;
+use App\Validation\Rules\User\ValidateUserShortLink;
 use App\Validation\Validation;
 use Exception;
 use Illuminate\Auth\AuthenticationException;
@@ -105,8 +106,8 @@ class UserController extends Controller
     {
         $validation = new Validation(
             match ($field) {
-                'email' => ValidateUserEmail::rules(),
-                'nickname' => ValidateUserNickname::rules(),
+                'email' => ['field' => ValidateUserEmail::rules()['email']],
+                'nickname' => ['field' => ValidateUserNickname::rules()['nickname']],
             },
             Rule::messages()
         );

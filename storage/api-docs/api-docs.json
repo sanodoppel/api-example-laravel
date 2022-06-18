@@ -100,6 +100,110 @@
                 }
             }
         },
+        "/api/file/upload/{type}": {
+            "post": {
+                "tags": [
+                    "File"
+                ],
+                "description": "Upload file",
+                "operationId": "84bfca39f201315104e2265e4357824e",
+                "parameters": [
+                    {
+                        "name": "type",
+                        "in": "path",
+                        "description": "type: avatar"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "file": {
+                                        "type": "file"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FileResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "auth_user": []
+                    }
+                ]
+            }
+        },
+        "/api/file/get/{type}/{filename}": {
+            "get": {
+                "tags": [
+                    "File"
+                ],
+                "description": "Get file",
+                "operationId": "09b46299c8aa208d70ad0f1a6d32f383",
+                "parameters": [
+                    {
+                        "name": "type",
+                        "in": "path",
+                        "description": "type: avatar"
+                    },
+                    {
+                        "name": "filename",
+                        "in": "path",
+                        "description": "filename"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "auth_user": []
+                    }
+                ]
+            }
+        },
+        "/api/file/delete/avatar": {
+            "delete": {
+                "tags": [
+                    "File"
+                ],
+                "description": "Delete avatar",
+                "operationId": "552a10f16fbd3b9527fcc8c3cffa001b",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EmptyResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "auth_user": []
+                    }
+                ]
+            }
+        },
         "/api/user/create": {
             "post": {
                 "tags": [
@@ -403,16 +507,16 @@
                     },
                     "name": {
                         "type": "string"
+                    },
+                    "timezone": {
+                        "type": "string"
                     }
                 },
                 "type": "object"
             },
             "ValidateUserFieldDTO": {
                 "properties": {
-                    "nickname": {
-                        "type": "string"
-                    },
-                    "email": {
+                    "field": {
                         "type": "string"
                     }
                 },
@@ -469,6 +573,20 @@
                 },
                 "type": "object"
             },
+            "FileResource": {
+                "properties": {
+                    "result": {
+                        "$ref": "#/components/schemas/FileResourceItem"
+                    },
+                    "status": {
+                        "type": "integer"
+                    },
+                    "meta": {
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
             "ForgetPasswordResource": {
                 "properties": {
                     "result": {
@@ -491,27 +609,53 @@
                 },
                 "type": "object"
             },
+            "FileResourceItem": {
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string"
+                    },
+                    "filename": {
+                        "type": "string"
+                    },
+                    "extension": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "UserResourceItem": {
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "nickname": {
+                        "type": "string"
+                    },
+                    "timezone": {
+                        "type": "string"
+                    },
+                    "avatar": {
+                        "$ref": "#/components/schemas/FileResourceItem"
+                    }
+                },
+                "type": "object"
+            },
             "UserResource": {
                 "properties": {
                     "result": {
-                        "type": "array",
-                        "items": {
-                            "properties": {
-                                "id": {
-                                    "type": "string"
-                                },
-                                "name": {
-                                    "type": "string"
-                                },
-                                "email": {
-                                    "type": "string"
-                                },
-                                "nickname": {
-                                    "type": "string"
-                                }
-                            },
-                            "type": "object"
-                        }
+                        "$ref": "#/components/schemas/UserResourceItem"
                     },
                     "status": {
                         "type": "integer"

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Helper\Uuid;
 use App\Models\User;
 use Database\Factories\UserFactory;
 use Illuminate\Http\JsonResponse;
@@ -42,11 +43,31 @@ class UserTest extends FeatureTestCase
      */
     public function testValidateField(array $data)
     {
-        $response = $this->postJson(route('api_user_validate_field', ['field' => 'email'], false), $data);
+        //email chaeck
+        $response = $this->postJson(
+            route('api_user_validate_field', ['field' => 'email'], false),
+            ['field' => $data['email']]
+        );
         $response->assertStatus(JsonResponse::HTTP_BAD_REQUEST);
 
-        $response = $this->postJson(route('api_user_validate_field', ['field' => 'nickname'], false), $data);
+        $response = $this->postJson(
+            route('api_user_validate_field', ['field' => 'email'], false),
+            ['field' => $data['email'] . time()]
+        );
+        $response->assertStatus(JsonResponse::HTTP_OK);
+
+        //nickname check
+        $response = $this->postJson(
+            route('api_user_validate_field', ['field' => 'nickname'], false),
+            ['field' => $data['nickname']]
+        );
         $response->assertStatus(JsonResponse::HTTP_BAD_REQUEST);
+
+        $response = $this->postJson(
+            route('api_user_validate_field', ['field' => 'nickname'], false),
+            ['field' => $data['nickname'] . time()]
+        );
+        $response->assertStatus(JsonResponse::HTTP_OK);
     }
 
     public function testForgetPassword()
@@ -105,7 +126,8 @@ class UserTest extends FeatureTestCase
         $data = [
             'email' => 'new_email@test.local',
             'name' => 'new name',
-            'nickname' => 'new_nickname'
+            'nickname' => 'new_nickname',
+            'timezone' => 'America/Los_Angeles',
         ];
 
         $user = User::factory()->create();

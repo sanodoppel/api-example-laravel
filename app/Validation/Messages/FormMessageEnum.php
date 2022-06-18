@@ -13,4 +13,6 @@ enum FormMessageEnum
     case NOT_STRING;
     case DIGIT_WRONG_LENGTH;
     case NOT_UUID;
+    case NOT_IMAGE;
+    case WRONG_SIZE;
 }

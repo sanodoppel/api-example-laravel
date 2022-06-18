@@ -7,32 +7,20 @@ use App\DataTransferObjects\DataTransferObjectTrait;
 
 /**
  * @OA\Schema(
- *      @OA\Property(property="nickname", type="string"),
- *      @OA\Property(property="email", type="string"),
+ *      @OA\Property(property="field", type="string")
  * )
  */
 class ValidateUserFieldDTO implements DataTransferObject
 {
     use DataTransferObjectTrait;
 
-    protected readonly ?string $nickname;
-
-    protected readonly ?string $email;
+    protected readonly ?string $field;
 
     /**
      * @return string|null
      */
-    public function getNickname(): ?string
+    public function getField(): ?string
     {
-        return $this->nickname;
+        return $this->field;
     }
-
-    /**
-     * @return string|null
-     */
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
 }

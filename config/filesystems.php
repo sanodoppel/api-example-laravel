@@ -56,6 +56,12 @@ return [
             'throw' => false,
         ],
 
+        'avatar' => [
+            'driver' => env('FILESYSTEM_DISK'),
+            'root' => storage_path('app/image/avatar'),
+            'throw' => false,
+        ],
+
     ],
 
     /*

@@ -4,16 +4,16 @@ namespace App\Validation\Rules;
 
 use JetBrains\PhpStorm\ArrayShape;
 
-abstract class Fingerprint extends Rule
+abstract class Avatar
 {
     /**
      * @return array
      */
-    #[ArrayShape(['fingerprint' => "string[]"])]
+    #[ArrayShape(['file' => "string[]"])]
     public static function rules(): array
     {
         return [
-            'fingerprint' => ['required', 'string', 'uuid'],
+            'file' => ['required', 'image', 'max:2000'],
         ];
     }
 }

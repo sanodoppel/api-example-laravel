@@ -33,6 +33,9 @@ abstract class Rule implements RuleInterface
             'digits_between' => FormMessageEnum::DIGIT_WRONG_LENGTH->name,
             'uuid' => FormMessageEnum::NOT_UUID->name,
             'alpha_dash' => FormMessageEnum::WRONG_FORMAT->name,
+            'timezone' => FormMessageEnum::WRONG_FORMAT->name,
+            'image' => FormMessageEnum::NOT_IMAGE->name,
+            'max' => FormMessageEnum::WRONG_SIZE->name,
         ];
     }
 }

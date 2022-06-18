@@ -34,7 +34,7 @@ trait DataTransferObjectTrait
      */
     public function getData(): array
     {
-        $data = [];
+        $data = get_class_vars(get_class($this));
         foreach (get_object_vars($this) as $key => $value) {
             $data[$key] = $value;
         }
@@ -47,7 +47,10 @@ trait DataTransferObjectTrait
      */
     public function getDataForModel(): array
     {
-        $data = [];
+        foreach (get_class_vars(get_class($this)) as $key => $value) {
+            $data[strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $key))] = null;
+        }
+
         foreach (get_object_vars($this) as $key => $value) {
             $data[strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $key))] = $value;
         }

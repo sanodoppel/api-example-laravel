@@ -3,18 +3,17 @@
 namespace App\Http\Resources;
 
 use App\Http\AppResponse;
-use App\Http\Resources\Items\UserResourceItem;
-use App\Models\File;
+use App\Http\Resources\Items\FileResourceItem;
 use Illuminate\Http\Request;
 
 /**
  * @OA\Schema(
- *     @OA\Property(property="result", type="object", ref="#/components/schemas/UserResourceItem"),
+ *     @OA\Property(property="result", type="object", ref="#/components/schemas/FileResourceItem"),
  *     @OA\Property(property="status", type="integer"),
  *     @OA\Property(property="meta", type="object")
  * )
  */
-class UserResource extends Resource
+class FileResource extends Resource
 {
     /**
      * Transform the resource into an array.
@@ -24,6 +23,6 @@ class UserResource extends Resource
      */
     public function toArray($request)
     {
-        return AppResponse::prepare((new UserResourceItem($this->resource))->get(), $this->status);
+        return AppResponse::prepare((new FileResourceItem($this->resource))->get(), $this->status);
     }
 }
